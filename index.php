@@ -1,8 +1,18 @@
 <?php
 session_start();
-if (isset($_SESSION['user_id'])) {
-    header("Location: dashboard.php");
-    exit();
+require_once 'includes/config.php';
+require_once 'includes/functions.php';
+
+if (!isset($_SESSION['user_id']) && isset($_COOKIE['remember_token'])) {
+    $token = $_COOKIE['remember_token'];
+    $stmt = $pdo->prepare("SELECT * FROM users WHERE remember_token = ?");
+    $stmt->execute([$token]);
+    $user = $stmt->fetch();
+    
+    if ($user) {
+        $_SESSION['user_id'] = $user['id'];
+        $_SESSION['username'] = $user['username'];
+    }
 }
 ?>
 <!DOCTYPE html>

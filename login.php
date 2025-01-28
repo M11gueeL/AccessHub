@@ -9,13 +9,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $user = loginUser($pdo, $username, $password);
     if ($user) {
-        $_SESSION['user_id'] = $user['id'];
-        $_SESSION['username'] = $user['username'];
-        header("Location: dashboard.php");
-        exit();
-    } else {
-        $error = "Usuario o contraseña incorrectos.";
+    $_SESSION['user_id'] = $user['id'];
+    $_SESSION['username'] = $user['username'];
+    
+    if (isset($_POST['remember']) && $_POST['remember'] == 'on') {
+        $token = bin2hex(random_bytes(16));
+        setcookie('remember_token', $token, time() + (86400 * 30), "/"); // Cookie válida por 30 días
+        
+        // Guardar el token en la base de datos asociado al usuario
+        $stmt = $pdo->prepare("UPDATE users SET remember_token = ? WHERE id = ?");
+        $stmt->execute([$token, $user['id']]);
     }
+    
+    header("Location: dashboard.php");
+    exit();
+}
+
 }
 ?>
 <!DOCTYPE html>
