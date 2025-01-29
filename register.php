@@ -31,12 +31,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
     <title>Registro</title>
+    <style>
+        .fade-out {
+            animation: fadeOut 3s forwards;
+        }
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+    </style>
 </head>
 <body class="bg-gradient-to-r from-blue-50 to-blue-100 flex items-center justify-center h-screen">
     <div class="bg-white p-8 rounded shadow-md w-96">
         <h1 class="text-3xl font-bold mb-4">Registro</h1>
         <?php if (isset($error)): ?>
-            <p class="text-red-500 mb-4"><?php echo $error; ?></p>
+            <div id="error-message" class="text-white bg-red-600 border border-red-400 px-4 py-3 rounded relative mb-4">
+                <span class="block sm:inline"><?php echo $error; ?></span>
+            </div>
         <?php endif; ?>
         <form action="" method="POST">
             <div class="mb-4">
@@ -59,5 +70,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </form>
         <p class="mt-4">¿Ya tienes una cuenta? <a href="login.php" class="text-blue-500">Inicia sesión</a></p>
     </div>
+    <script>
+        setTimeout(function() {
+            var errorMessage = document.getElementById('error-message');
+            if (errorMessage) {
+                errorMessage.classList.add('fade-out');
+                setTimeout(function() {
+                    errorMessage.style.display = 'none';
+                }, 3000);
+            }
+        }, 5000); // Desaparece después de 5 segundos
+    </script>
 </body>
 </html>
